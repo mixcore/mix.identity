@@ -1,0 +1,49 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+configuration: Release
+init:
+- ps: >-
+    choco install opencover.portable
+
+    choco install dotnetcore-sdk
+
+before_build:
+- cmd: >-
+    REM git clone -q --branch=master https://github.com/Swastika-IO/Swastika-IO-Heart.git C:\projects\Swastika-Heart
+
+    REM git clone -q --branch=master https://github.com/Swastika-IO/Swastika-IO-Identity.git C:\projects\Swastika-Identity
+
+    cd src
+
+    nuget restore
+
+
+    REM SonarQube.Scanner.MSBuild.exe begin /k:"Swastika-IO-Core" /d:sonar.organization="swastika-io" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="abc12c086721b2321aeca5c1f7c06e19b6a92213"
+
+
+    REM MsBuild.exe /t:Rebuild
+
+
+    REM SonarQube.Scanner.MSBuild.exe end /d:sonar.login="abc12c086721b2321aeca5c1f7c06e19b6a92213"
+
+
+    cd Swastika.Identity
+
+    dotnet restore
+
+    dotnet build
+build:
+  project: src\Swastika.Identity.sln
+  verbosity: minimal
+
+artifacts:
+- path: dist
+  name: web-app
+notifications:
+- provider: Email
+  to:
+  - nhathoang989@gmail.com
+  subject: '[ Swastika I/O Identity] Build failure'
+  on_build_success: false
+  on_build_failure: true
+  on_build_status_changed: false
