@@ -13,6 +13,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 2.2.207
+        github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Build with dotnet
       run: |
         cd src/Mix.Identity
